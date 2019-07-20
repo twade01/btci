@@ -8,13 +8,13 @@ To create a simple application deployment with Terraform, Packer, CircleCI and A
 ## Pipeline Overview
 
 ### Workflow
-![alt text](https://github.com/twade01/btci/images/workflow.jpg "Workflow-Overview")
+![Workflow-Overview](/images/workflow.jpg "Workflow-Overview")
 
 ### Pipeline
-![alt text](https://github.com/twade01/btci/images/pipe-overview.jpg "Pipe-Overview")
+![Pipe-Overview](images/pipe-overview.jpg "Pipe-Overview")
 
 ## Architecture Overview
-![alt text](https://github.com/twade01/btci/images/arch-overview.jpg "Arch-Overview")
+![Arch-Overview](/images/arch-overview.jpg "Arch-Overview")
 
 ## Source code structure
 
