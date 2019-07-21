@@ -19,12 +19,12 @@ resource "aws_lb_target_group" "web" {
   vpc_id   = "${var.vpc-id}"
 }
 
-resource "aws_lb_target_group" "web2" {
-  name     = "web2-target-group-${var.environment}"
-  port     = "8334"
-  protocol = "TCP"
-  vpc_id   = "${var.vpc-id}"
-}
+# resource "aws_lb_target_group" "web2" {
+#   name     = "web2-target-group-${var.environment}"
+#   port     = "8334"
+#   protocol = "TCP"
+#   vpc_id   = "${var.vpc-id}"
+# }
 
 resource "aws_lb_listener" "web" {
   load_balancer_arn = "${aws_lb.web.arn}"
@@ -37,16 +37,16 @@ resource "aws_lb_listener" "web" {
   }
 }
 
-resource "aws_lb_listener" "web2" {
-  load_balancer_arn = "${aws_lb.web.arn}"
-  port              = "8334"
-  protocol          = "TCP"
+# resource "aws_lb_listener" "web2" {
+#   load_balancer_arn = "${aws_lb.web.arn}"
+#   port              = "8334"
+#   protocol          = "TCP"
 
-  default_action {
-    target_group_arn = "${aws_lb_target_group.web2.arn}"
-    type             = "forward"
-  }
-}
+#   default_action {
+#     target_group_arn = "${aws_lb_target_group.web2.arn}"
+#     type             = "forward"
+#   }
+# }
 
 resource "aws_lb_target_group_attachment" "web" {
   count = "${var.countnum}"
@@ -56,10 +56,10 @@ resource "aws_lb_target_group_attachment" "web" {
   port             = "8333"
 }
 
-resource "aws_lb_target_group_attachment" "web2" {
-  count = "${var.countnum}"
+# resource "aws_lb_target_group_attachment" "web2" {
+#   count = "${var.countnum}"
 
-  target_group_arn = "${aws_lb_target_group.web2.arn}"
-  target_id        = "${element(aws_instance.web.*.id, count.index)}"
-  port             = "8334"
-}
+#   target_group_arn = "${aws_lb_target_group.web2.arn}"
+#   target_id        = "${element(aws_instance.web.*.id, count.index)}"
+#   port             = "8334"
+# }
