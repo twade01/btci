@@ -14,7 +14,7 @@ To create a simple application deployment with Terraform, Packer, CircleCI and A
 ![Pipe-Overview](images/pipe-overview.jpg "Pipe-Overview")
 
 ## Architecture Overview
-![Arch-Overview](/images/arch-overview.jpg "Arch-Overview")
+![Arch-Overview](/images/btci-infra.png "Arch-Overview")
 
 ## Source code structure
 
