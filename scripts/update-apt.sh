@@ -6,7 +6,7 @@ set -euf -o pipefail
 export DEBIAN_FRONTEND=noninteractive
 
 # Retrieve APT package sources
-apt-get update -qq
+sudo apt-get update -qq
 
 # Install the newest versions of all installed packages
-apt-get upgrade -y
+sudo apt-get upgrade -y
