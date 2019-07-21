@@ -1,0 +1,58 @@
+version: 2
+
+references:
+
+set_creds: &set_creds
+  run:
+    name: set_creds
+    command: |
+      if [ "${CIRCLE_BRANCH}" == "master" ]; then
+        mkdir ~/.aws
+        echo [default] >> ~/.aws/credentials
+        echo aws_access_key_id=${awsa} >> ~/.aws/credentials
+        echo aws_secret_access_key=${awss} >> ~/.aws/credentials
+        echo [default] >> ~/.aws/config
+        echo region=us-west-1 >> ~/.aws/config
+        echo output=text >> ~/.aws/config
+      else
+        mkdir ~/.aws
+        echo [default] >> ~/.aws/credentials
+        echo aws_access_key_id=${awsa} >> ~/.aws/credentials
+        echo aws_secret_access_key=${awss} >> ~/.aws/credentials
+        echo [default] >> ~/.aws/config
+        echo region=us-west-1 >> ~/.aws/config
+        echo output=text >> ~/.aws/config
+      fi
+
+jobs:
+
+  packer-validate:
+    docker:
+      - image: hashicorp/packer:light
+    steps:
+      - checkout
+      - run:
+          name: Validate Templates
+          command: ls ./packer/*.json | xargs -I{} packer validate {}
+
+  packer-build-ami:
+    docker:
+      - image: hashicorp/packer:light
+    steps:
+      - checkout
+      - *set_creds
+      - run:
+          name: Build base ami
+          command: packer build ./packer/packer.json
+          no_output_timeout: 30m
+
+# ------------------------------------------------------------------------------------
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - packer-validate
+      - packer-build-ami:
+          requires:
+            - packer-validate
