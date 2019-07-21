@@ -49,7 +49,7 @@
         GOPATH: /usr/local/go/
 
     - name: Run btcd
-      shell: /usr/local/go/bin/btcd --simnet --rpcuser=testuser --rpcpass=testp4ssw0rd &
+      shell: /usr/local/go/bin/btcd &
       register: run_btcd
 
     - debug:
