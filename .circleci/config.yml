@@ -46,6 +46,35 @@ jobs:
           command: packer build ./packer/packer.json
           no_output_timeout: 30m
 
+  terraform-plan:
+    docker:
+      - image: hashicorp/terraform:light
+    steps:
+      - checkout
+      - *set_creds
+      - run:
+          name: terraform init
+          command: cd ./terraform/ && terraform init
+      - run:
+          name: terraform plan
+          command: cd ./terraform/ && terraform plan
+
+  terraform-apply:
+    docker:
+      - image: hashicorp/terraform:light
+    steps:
+      - checkout
+      - *set_creds
+      - run:
+          name: terraform init
+          command: cd ./terraform/ && terraform init
+      - run:
+          name: terraform plan
+          command: cd ./terraform/ && terraform plan
+      - run:
+          name: terraform apply
+          command: cd ./terraform/ && terraform init && terraform apply -auto-approve
+
 # ------------------------------------------------------------------------------------
 
 workflows:
@@ -56,3 +85,9 @@ workflows:
       - packer-build-ami:
           requires:
             - packer-validate
+      - terraform-plan:
+          requires:
+            - packer-build-ami
+      - terraform-apply:
+          requires:
+            - terraform-plan
