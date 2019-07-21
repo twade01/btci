@@ -36,14 +36,21 @@
         "Version": "{{user `version`}}"
       }
     }],
-    "provisioners": [{
+    "provisioners": [
+      {
+        "inline": [
+          "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done"
+        ],
+        "type": "shell"
+      },
+      {
       "type": "shell",
       "inline": [
         "sudo apt-get install python -y",
         "curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py",
         "sudo python get-pip.py",
         "sudo pip install ansible==2.7.9"
-    ]}, 
+      ]}, 
       {
         "type": "ansible-local",
         "playbook_file": "./ansible/install-btcd.yml",
@@ -51,6 +58,13 @@
           "./ansible/roles/common"
         ],
         "playbook_dir": "./ansible"
+      },
+      {
+        "scripts": [
+          "./scripts/update-apt.sh",
+          "./scripts/clean-apt.sh"
+        ],
+        "type": "shell"
       },
       {
         "type": "shell",

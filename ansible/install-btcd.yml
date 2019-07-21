@@ -1,0 +1,62 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: true    # gather OS info that is made available for tasks/roles
+  become: yes           # majority of CIS tasks require root
+
+  vars:
+    - go_ver: go1.12.6.linux-amd64.tar.gz
+
+  roles:
+  - common
+
+  tasks:
+
+    - name: Download go
+      shell: 'wget https://dl.google.com/go/{{go_ver}}'
+
+    - name: Extract go
+      shell: 'tar -C /usr/local -xzf {{go_ver}}'
+
+    - name: Set Paths
+      shell: |
+        export PATH=$PATH:/usr/local/go/bin
+        export GOROOT=$HOME/go
+        export PATH=$PATH:$GOROOT/bin
+        export GOPATH=$HOME/projects/go/
+
+    - name: Verify go
+      command: /usr/local/go/bin/go version
+      register: go_output
+
+    - debug:
+        var: go_output
+
+    - name: Mkdir for btcd
+      file:
+        path: /usr/local/go/src/github.com/btcd/
+        state: directory
+        mode: '0755'
+
+    - name: Checkout btcd repo
+      git:
+        repo: https://github.com/btcsuite/btcd.git
+        dest: /usr/local/go/src/github.com/btcd/
+
+    - name: Install btcd
+      shell: cd /usr/local/go/src/github.com/btcd && GO111MODULE=on /usr/local/go/bin/go install -v . ./cmd/...
+      environment:
+        GOPATH: /usr/local/go/
+
+    - name: Run btcd
+      shell: /usr/local/go/bin/btcd --simnet --rpcuser=testuser --rpcpass=testp4ssw0rd &
+      register: run_btcd
+
+    - debug:
+        var: run_btcd
+
+    - name: Start btcd at reboot in crontab
+      cron:
+        name: "Start btcd at reboot"
+        special_time: reboot
+        job: "/usr/local/go/bin/btcd &"
