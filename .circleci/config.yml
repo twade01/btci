@@ -14,7 +14,7 @@ set_creds: &set_creds
         echo [default] >> ~/.aws/config
         echo region=us-west-1 >> ~/.aws/config
         echo output=text >> ~/.aws/config
-      else
+      else # If using staging branch, different creds / env
         mkdir ~/.aws
         echo [default] >> ~/.aws/credentials
         echo aws_access_key_id=${awsa} >> ~/.aws/credentials
@@ -53,11 +53,8 @@ jobs:
       - checkout
       - *set_creds
       - run:
-          name: terraform init
-          command: cd ./terraform/ && terraform init
-      - run:
           name: terraform plan
-          command: cd ./terraform/ && terraform plan
+          command: cd ./terraform/ && terraform init && terraform plan
 
   terraform-apply:
     docker:
@@ -65,12 +62,6 @@ jobs:
     steps:
       - checkout
       - *set_creds
-      - run:
-          name: terraform init
-          command: cd ./terraform/ && terraform init
-      - run:
-          name: terraform plan
-          command: cd ./terraform/ && terraform plan
       - run:
           name: terraform apply
           command: cd ./terraform/ && terraform init && terraform apply -auto-approve
